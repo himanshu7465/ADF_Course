@@ -1,0 +1,36 @@
+{
+	"name": "TransformCSV",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "dataflowSource",
+						"type": "DatasetReference"
+					},
+					"name": "sourceCSV"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          transaction_id as string,",
+				"          transactional_date as string,",
+				"          product_id as string,",
+				"          customer_id as string,",
+				"          payment as string,",
+				"          credit_card as string,",
+				"          loyalty_card as string,",
+				"          cost as string,",
+				"          quantity as string,",
+				"          price as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sourceCSV"
+			]
+		}
+	}
+}
