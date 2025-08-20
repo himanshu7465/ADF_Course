@@ -1,0 +1,9 @@
+{
+	"name": "adf-course-himan",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "e3217b57-fb24-4fb9-95de-4d461c918a2c",
+		"tenantId": "f9675a5a-ea4f-4712-ab91-b3be6fa63411"
+	}
+}
