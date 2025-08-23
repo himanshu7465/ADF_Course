@@ -226,7 +226,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "csvSource",
+								"referenceName": "csvSinkGit",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -243,7 +243,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/csvMetadata')]",
 				"[concat(variables('factoryId'), '/dataflows/TransformCSV')]",
-				"[concat(variables('factoryId'), '/datasets/csvSource')]",
+				"[concat(variables('factoryId'), '/datasets/csvSinkGit')]",
 				"[concat(variables('factoryId'), '/datasets/paramSourceCSV')]",
 				"[concat(variables('factoryId'), '/datasets/reportingSink')]"
 			]
@@ -423,6 +423,30 @@
 								"enablePartitionDiscovery": false
 							}
 						}
+					},
+					{
+						"name": "ExecuteGitPipeline",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "DeleteFiles",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "pipelineGit",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
 					}
 				],
 				"policy": {
@@ -433,7 +457,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/csvSource')]",
-				"[concat(variables('factoryId'), '/datasets/csvSink')]"
+				"[concat(variables('factoryId'), '/datasets/csvSink')]",
+				"[concat(variables('factoryId'), '/pipelines/pipelineGit')]"
 			]
 		},
 		{
