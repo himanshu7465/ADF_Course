@@ -14,6 +14,9 @@
 		"linkedserviceGit_properties_typeProperties_url": {
 			"value": "https://raw.githubusercontent.com"
 		},
+		"managerTrigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/3b16a48b-879c-42fc-bbfc-fe3ad4c202e0/resourceGroups/rg-ADFcourse/providers/Microsoft.Storage/storageAccounts/storageadfhimanshu"
+		},
 		"containerUri": {
 			"value": ""
 		},
