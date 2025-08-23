@@ -804,7 +804,14 @@
 					{
 						"name": "Get Metadata",
 						"type": "GetMetadata",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "FileValidation",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -974,6 +981,21 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "FileValidation",
+						"type": "Validation",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "csvSource",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"timeout": "0.12:00:00",
+							"sleep": 10
+						}
 					}
 				],
 				"policy": {
@@ -984,8 +1006,67 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/csvMetadata')]",
 				"[concat(variables('factoryId'), '/dataflows/TransformCSV')]",
+				"[concat(variables('factoryId'), '/datasets/csvSource')]",
 				"[concat(variables('factoryId'), '/datasets/paramSourceCSV')]",
 				"[concat(variables('factoryId'), '/datasets/reportingSink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/prodPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ExecuteManagerPipeline",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "pipelinemanager",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "ExecuteOnSelectedFilePipeline",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "ExecuteManagerPipeline",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "onlySelectedFiles",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pipelinemanager')]",
+				"[concat(variables('factoryId'), '/pipelines/onlySelectedFiles')]"
 			]
 		},
 		{
@@ -998,7 +1079,7 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "pipelinemanager",
+							"referenceName": "prodPipeline",
 							"type": "PipelineReference"
 						},
 						"parameters": {}
@@ -1015,38 +1096,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pipelinemanager')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/selectedFilesTrigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "onlySelectedFiles",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 15,
-						"startTime": "2025-08-23T12:46:00",
-						"endTime": "2025-08-23T12:50:00",
-						"timeZone": "India Standard Time"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/onlySelectedFiles')]"
+				"[concat(variables('factoryId'), '/pipelines/prodPipeline')]"
 			]
 		}
 	]
