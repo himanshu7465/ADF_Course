@@ -183,7 +183,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "csvSource",
+						"referenceName": "csvSinkGit",
 						"type": "DatasetReference"
 					},
 					"timeout": "0.12:00:00",
