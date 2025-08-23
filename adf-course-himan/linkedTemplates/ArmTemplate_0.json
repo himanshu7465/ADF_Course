@@ -22,6 +22,10 @@
 		"managerTrigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/3b16a48b-879c-42fc-bbfc-fe3ad4c202e0/resourceGroups/rg-ADFcourse/providers/Microsoft.Storage/storageAccounts/storageadfhimanshu"
+		},
+		"manTrigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/3b16a48b-879c-42fc-bbfc-fe3ad4c202e0/resourceGroups/rg-ADFcourse/providers/Microsoft.Storage/storageAccounts/storageadfhimanshu"
 		}
 	},
 	"variables": {
@@ -56,6 +60,26 @@
 					"url": "[parameters('linkedserviceGit_properties_typeProperties_url')]",
 					"enableServerCertificateValidation": true,
 					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/managerTrigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/source/blobs/csvfiles/Fact_Sales_1.csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('managerTrigger_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
 				}
 			},
 			"dependsOn": []
@@ -965,12 +989,12 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/managerTrigger')]",
+			"name": "[concat(parameters('factoryName'), '/manTrigger')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Stopped",
+				"runtimeState": "Started",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -984,7 +1008,7 @@
 				"typeProperties": {
 					"blobPathBeginsWith": "/source/blobs/csvfiles/Fact_Sales_1.csv",
 					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('managerTrigger_properties_typeProperties_scope')]",
+					"scope": "[parameters('manTrigger_properties_typeProperties_scope')]",
 					"events": [
 						"Microsoft.Storage.BlobCreated"
 					]

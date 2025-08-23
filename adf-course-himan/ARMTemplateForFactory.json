@@ -22,6 +22,10 @@
 		"managerTrigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/3b16a48b-879c-42fc-bbfc-fe3ad4c202e0/resourceGroups/rg-ADFcourse/providers/Microsoft.Storage/storageAccounts/storageadfhimanshu"
+		},
+		"manTrigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/3b16a48b-879c-42fc-bbfc-fe3ad4c202e0/resourceGroups/rg-ADFcourse/providers/Microsoft.Storage/storageAccounts/storageadfhimanshu"
 		}
 	},
 	"variables": {
@@ -877,15 +881,7 @@
 			"properties": {
 				"annotations": [],
 				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "pipelinemanager",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
+				"pipelines": [],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
 					"blobPathBeginsWith": "/source/blobs/csvfiles/Fact_Sales_1.csv",
@@ -896,9 +892,7 @@
 					]
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pipelinemanager')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/selectedFilesTrigger')]",
@@ -1023,6 +1017,36 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/dataflowSource')]",
 				"[concat(variables('factoryId'), '/datasets/DataflowSink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/manTrigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pipelinemanager",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/source/blobs/csvfiles/Fact_Sales_1.csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('manTrigger_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pipelinemanager')]"
 			]
 		}
 	]
